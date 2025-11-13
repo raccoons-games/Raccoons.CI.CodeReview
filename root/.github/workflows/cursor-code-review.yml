@@ -50,16 +50,13 @@ jobs:
           
           Procedure:
           1. Get changed files with patches:
-             gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files --paginate --jq '"'"'.[] | {filename,patch}'"'"'
+            gh api repos/$GITHUB_REPOSITORY/pulls/${GITHUB_REPOSITORY}/files --paginate --jq '"'"'.[] | select(.filename | test("^(Assets/(Scripts|Game/Scripts|_Game/Scripts)/).*\\.cs$")) | .patch'"'"'
           
-          2. Get the diff:
-             gh pr diff -- '*.cs'
+          2. If NO .cs files were changed, skip the review and exit gracefully
           
-          3. If NO .cs files were changed, skip the review and exit gracefully
+          3. Analyze each changed file against all standards
           
-          4. Analyze each changed file against all standards
-          
-          5. Compute exact inline positions for each issue
+          4. Compute exact inline positions for each issue
           
           Analysis Categories:
           - 🏗️ **SOLID/Architecture** - Principle violations (SRP, OCP, LSP, ISP, DIP) and layer violations
@@ -100,7 +97,7 @@ jobs:
           [IF High Priority issues > 1, ADD THIS SECTION:]
           ---
           ⚠️ **This PR has too many architectural and critical issues.**
-          Ping @the_vitalife if you need guidance on resolving these issues.
+          Ping @thevitalife if you need guidance on resolving these issues.
           ---
           ### Notes
           [Any additional context, patterns observed, or general feedback]
@@ -124,7 +121,7 @@ jobs:
              ```
           2. Count High Priority issues
           3. Build summary with user mention if needed:
-             - If (High Priority count) > 1: Include the @the_vitalife mention section
+             - If (High Priority count) > 1: Include the @thevitalife mention section
              - Otherwise: Skip the mention section
           4. Submit the review:
              ```bash
@@ -151,5 +148,5 @@ jobs:
           - The summary body goes to -f body parameter
           - The inline comments go to -f comments parameter
           - Count issues accurately for the mention trigger
-          - Make the @the_vitalife mention clear and actionable
+          - Make the @thevitalife mention clear and actionable
           '

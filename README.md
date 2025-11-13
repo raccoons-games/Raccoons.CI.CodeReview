@@ -17,3 +17,7 @@ Automatic code review is performed via Cursor CLI Agent.
 1. Clone this repository: `git clone https://github.com/raccoons-games/Raccoons.CI.CodeReview.git`
 2. Copy all the contents in folder `root` and paste in your repository root (folders might be hidden by your OS, make hidden files visible)
 3. Commit it. And that's it - you will have review for next PR :)
+
+## Target Files
+
+All files under Assets/Game/Scripts, Assets/Scripts, Assets/_Game/Scripts will be reviewed. So we ignore any scripts in other folders, which might be 3rd party tools and we should not spend tokens on them. If your scripts are placed anywhere else - contact @thevitalife, he will fix it.
