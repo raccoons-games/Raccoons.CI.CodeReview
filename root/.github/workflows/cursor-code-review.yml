@@ -16,11 +16,16 @@ jobs:
     if: github.event.pull_request.draft == false
 
     steps:
-      - name: Checkout repository
+      - name: Checkout PR source branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 1
+          fetch-tags: false
+
+      - name: Fetch PR target branch
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}:${{ github.event.pull_request.base.ref }}
 
       - name: Install Cursor CLI
         run: |
@@ -31,7 +36,7 @@ jobs:
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
           GH_TOKEN: ${{ github.token }}
-          MODEL: gpt-5
+          MODEL: gpt-5.1
         run: |
           cursor-agent --force --model "$MODEL" --output-format=text --print 'You are operating in a GitHub Actions runner performing automated code review. The gh CLI is available and authenticated via GH_TOKEN. You may comment on pull requests.
           
@@ -64,6 +69,9 @@ jobs:
           - 📐 **Style** - C# Google Style Guide compliance
           - 🚨 **Critical** - Security vulnerabilities, null safety issues, resource leaks
           - ⚡ **Performance** - Clear anti-patterns with measurable impact
+          
+          Analysis Exceptions:
+          - Never trigger on missing null checks for injected or serialized fields dependencies.
           
           Inline Comment Rules:
           - Max 15 inline comments, prioritize by severity
